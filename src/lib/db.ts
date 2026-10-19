@@ -21,7 +21,10 @@ export class AcademyDB extends Dexie {
   preferences!: EntityTable<Preferences, "id">;
 
   constructor() {
-    super("excel-academy");
+    // The IndexedDB name is deliberately left as the legacy string. It is a
+    // stable key for every user's saved progress, so renaming it would orphan
+    // existing data even though the product is now called "Excel Academy".
+    super("excel-magic-academy");
     this.version(1).stores({
       lessonProgress: "lessonId, completed, lastVisitedAt",
       badges: "badgeId, earnedAt",
