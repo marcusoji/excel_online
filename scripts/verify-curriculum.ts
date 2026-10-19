@@ -11,6 +11,7 @@
 import { LEVELS, LESSONS } from "../src/lib/curriculum";
 import { evaluateCell } from "../src/lib/formulaEngine";
 import { applyFillDown, applySort, applyAutoSum } from "../src/lib/gridActions";
+import { checkStepPasses, rebuildGridUpTo } from "../src/lib/lessonRunner";
 import { cellIdToPosition, positionToCellId, isValidCellId } from "../src/lib/cellUtils";
 import type { GridData, Lesson, LessonStep } from "../src/types";
 
@@ -20,39 +21,6 @@ let stepsChecked = 0;
 function fail(message: string) {
   failures++;
   console.error(`  ❌ ${message}`);
-}
-
-function checkStepPasses(step: LessonStep, grid: GridData, selectedCell: string | null, namedRanges?: Record<string, string>): boolean {
-  const check = step.check;
-  switch (check.type) {
-    case "auto":
-      return true;
-    case "cell-selected":
-      return selectedCell === check.cell;
-    case "non-empty":
-      return (grid[check.cell]?.raw ?? "").trim() !== "";
-    case "value-equals": {
-      const raw = (grid[check.cell]?.raw ?? "").trim();
-      if (typeof check.expected === "number") return Number(raw) === check.expected && raw !== "";
-      return check.caseSensitive ? raw === check.expected : raw.toLowerCase() === check.expected.toLowerCase();
-    }
-    case "formula-result-equals": {
-      const result = evaluateCell(check.cell, grid, namedRanges);
-      if (typeof result !== "number") return false;
-      const tolerance = check.tolerance ?? 0.01;
-      return Math.abs(result - check.expected) <= tolerance;
-    }
-    case "formula-text-equals": {
-      const result = evaluateCell(check.cell, grid, namedRanges);
-      return String(result).trim().toLowerCase() === check.expected.trim().toLowerCase();
-    }
-    case "formula-contains": {
-      const raw = (grid[check.cell]?.raw ?? "").toUpperCase().replace(/\s+/g, "");
-      return check.mustInclude.every((s) => raw.includes(s.toUpperCase().replace(/\s+/g, "")));
-    }
-    case "fill-equals":
-      return (grid[check.cell]?.fill ?? "").toLowerCase() === check.expected.toLowerCase();
-  }
 }
 
 /** Every cell id referenced anywhere in a lesson must fit inside its own cols x rows grid. */
@@ -191,6 +159,36 @@ for (const lesson of Object.values(LESSONS)) {
         `${lesson.id} step "${step.id}" (index ${i}): check failed — ${JSON.stringify(check)}` +
           (actual !== undefined ? ` — actual value: ${JSON.stringify(actual)}` : "")
       );
+    }
+  }
+
+  // 2c. Resume safety: rebuilding the sheet up to any step must leave that
+  // step (and every later one) passable, so a resume never strands a learner
+  // on a step whose inputs no longer exist.
+  for (let resumeAt = 1; resumeAt < lesson.steps.length; resumeAt++) {
+    let resumedGrid = rebuildGridUpTo(lesson, resumeAt);
+    let resumedSelection: string | null = null;
+    for (let i = resumeAt; i < lesson.steps.length; i++) {
+      const step = lesson.steps[i]!;
+      if (step.demo && step.demo.length > 0) {
+        for (const beat of step.demo) {
+          resumedSelection = beat.cell;
+          if (beat.fill) resumedGrid = { ...resumedGrid, [beat.cell]: { raw: resumedGrid[beat.cell]?.raw ?? "", ...resumedGrid[beat.cell], fill: beat.fill } };
+          if (beat.type !== undefined) resumedGrid = { ...resumedGrid, [beat.cell]: { ...resumedGrid[beat.cell], raw: beat.type } };
+        }
+      } else if (step.sortAction) {
+        resumedGrid = applySort(resumedGrid, step.sortAction);
+      } else if (step.autoSumAction) {
+        resumedGrid = applyAutoSum(resumedGrid, step.autoSumAction);
+      } else if (step.check.type !== "auto" && step.highlightCells && step.highlightCells.length >= 2) {
+        const [fromCell] = step.highlightCells;
+        resumedSelection = fromCell!;
+        resumedGrid = applyFillDown(resumedGrid, fromCell!, lesson.rows);
+      }
+      if (!checkStepPasses(step, resumedGrid, resumedSelection, lesson.namedRanges)) {
+        fail(`${lesson.id}: resuming at step ${resumeAt} ("${lesson.steps[resumeAt]!.id}") leaves step "${step.id}" unpassable`);
+        break;
+      }
     }
   }
 }

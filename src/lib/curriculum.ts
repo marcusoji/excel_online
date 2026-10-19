@@ -1193,6 +1193,30 @@ export function getAllLessonsInOrder(): Lesson[] {
   return LEVELS.flatMap((level) => level.lessonIds.map((id) => LESSONS[id]).filter((l): l is Lesson => Boolean(l)));
 }
 
+export function getLessonIndex(lessonId: string): number {
+  return getAllLessonsInOrder().findIndex((l) => l.id === lessonId);
+}
+
+/**
+ * Whether a lesson is unlocked, given the set of completed lesson ids.
+ * The first lesson is always available; everything else needs its immediate
+ * predecessor finished, so the path is a single ordered progression.
+ */
+export function isLessonUnlocked(lessonId: string, completed: Set<string>): boolean {
+  const idx = getLessonIndex(lessonId);
+  if (idx <= 0) return true;
+  const prev = getAllLessonsInOrder()[idx - 1];
+  return Boolean(prev && completed.has(prev.id));
+}
+
+/** The next lesson the learner should pick up: first unlocked, not-yet-done one. */
+export function getRecommendedLesson(completed: Set<string>): Lesson | undefined {
+  const all = getAllLessonsInOrder();
+  const next = all.find((l) => !completed.has(l.id) && isLessonUnlocked(l.id, completed));
+  if (next) return next;
+  return all.find((l) => !completed.has(l.id));
+}
+
 export function getNextLesson(currentLessonId: string): Lesson | undefined {
   const all = getAllLessonsInOrder();
   const idx = all.findIndex((l) => l.id === currentLessonId);

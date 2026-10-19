@@ -19,7 +19,7 @@ export function OfflineIndicator() {
         className={["h-1.5 w-1.5 rounded-full", isOnline ? "bg-owl-500" : "bg-gold-500"].join(" ")}
         aria-hidden
       />
-      {isOnline ? "Progress is saved on this device" : "Offline — still saving progress on this device"}
+      {isOnline ? "Saved on this device" : "Offline — saving on this device"}
     </div>
   );
 }

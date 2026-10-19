@@ -117,18 +117,18 @@ export function InteractiveSpreadsheet({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Formula bar — mirrors real Excel, and is the easiest place for Pro-mode
-          users to see/edit an exact formula string. */}
-      <div className="flex items-center gap-2 rounded-xl border border-slate-150 bg-white px-3 py-2 dark:bg-slate-850 dark:border-slate-750">
-        <span className="font-mono text-xs font-semibold text-owl-600 dark:text-owl-300 w-10 shrink-0">
+      {/* Formula bar — mirrors real Excel, and is the easiest place for
+          analyst-mode users to see/edit an exact formula string. */}
+      <div className="flex items-center gap-2.5 rounded-xl border border-slate-150 bg-white px-3 py-2 shadow-card dark:bg-slate-850 dark:border-slate-750">
+        <span className="font-mono text-xs font-bold text-owl-700 dark:text-owl-300 rounded-md bg-owl-50 dark:bg-owl-500/10 px-2 py-1 min-w-[2.75rem] text-center">
           {selectedCell ?? "—"}
         </span>
-        <span className="text-slate-300 dark:text-slate-750" aria-hidden>
-          |
+        <span className="text-slate-300 dark:text-slate-700" aria-hidden>
+          fx
         </span>
         <input
           aria-label={selectedCell ? `Formula for cell ${selectedCell}` : "Select a cell to edit it"}
-          className="flex-1 bg-transparent font-mono text-sm text-ink outline-none disabled:cursor-not-allowed dark:text-slate-50"
+          className="flex-1 min-w-0 bg-transparent font-mono text-sm text-ink outline-none disabled:cursor-not-allowed dark:text-slate-50"
           value={formulaBarValue}
           disabled={disabled || !selectedCell || (selectedCell ? readOnlySet.has(selectedCell) : true)}
           onChange={(e) => setDraft(e.target.value)}
@@ -141,10 +141,10 @@ export function InteractiveSpreadsheet({
             type="button"
             onClick={() => selectedCell && onFillDown?.(selectedCell)}
             disabled={disabled}
-            className="shrink-0 rounded-full bg-owl-50 dark:bg-owl-500/10 text-owl-700 dark:text-owl-300 text-xs font-bold px-3 py-1.5 hover:bg-owl-100 dark:hover:bg-owl-500/20"
+            className="shrink-0 rounded-full bg-owl-50 dark:bg-owl-500/10 text-owl-700 dark:text-owl-300 text-xs font-bold px-3 py-1.5 hover:bg-owl-100 dark:hover:bg-owl-500/20 transition-colors"
             title="Copy this formula to the cell below, shifting relative references"
           >
-            ⤓ Fill Down
+            Fill Down
           </button>
         )}
       </div>

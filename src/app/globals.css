@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 /* Self-hosted fonts (via @fontsource) — no network request, works fully offline. */
-@import "@fontsource/baloo-2/600.css";
-@import "@fontsource/baloo-2/700.css";
-@import "@fontsource/baloo-2/800.css";
+@import "@fontsource-variable/fraunces/standard.css";
+@import "@fontsource-variable/fraunces/standard-italic.css";
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
@@ -14,7 +13,8 @@
 @import "@fontsource/jetbrains-mono/700.css";
 
 :root {
-  --font-display: "Baloo 2", system-ui, sans-serif;
+  /* Editorial serif for headings — the "publication" half of the pairing. */
+  --font-display: "Fraunces Variable", Georgia, "Times New Roman", serif;
   --font-body: "Inter", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 }
@@ -22,16 +22,46 @@
 html {
   -webkit-text-size-adjust: 100%;
   /* iOS: avoid the rubber-band scroll revealing a white flash outside the app shell. */
-  background-color: #fffbf2;
+  background-color: #fbf7ef;
 }
 
 html.dark {
-  background-color: #151513;
+  background-color: #141311;
 }
 
 body {
   @apply bg-cream text-ink dark:bg-slate-925 dark:text-slate-50 font-body antialiased;
   min-height: 100dvh;
+}
+
+/* A soft, warm top-light on the canvas gives the app depth without a
+   background image, and keeps long reading pages from feeling flat. */
+.app-canvas {
+  background-image:
+    radial-gradient(900px 420px at 15% -8%, rgba(46, 158, 91, 0.07), transparent 62%),
+    radial-gradient(720px 380px at 88% -12%, rgba(63, 169, 234, 0.06), transparent 60%);
+}
+
+.dark .app-canvas {
+  background-image:
+    radial-gradient(900px 420px at 15% -8%, rgba(63, 186, 120, 0.09), transparent 62%),
+    radial-gradient(720px 380px at 88% -12%, rgba(63, 169, 234, 0.07), transparent 60%);
+}
+
+/* Tabular numerals keep grid values and stat figures from jittering as
+   they change — a small thing that makes the whole app feel solid. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Fraunces is a variable serif. Pinning the SOFT/WONK axes keeps headings
+   crisp and editorial; the weight sits in the components layer so utilities
+   like `font-bold` can still override it. */
+@layer components {
+  .font-display {
+    font-variation-settings: "SOFT" 0, "WONK" 0;
+    font-weight: 600;
+  }
 }
 
 /* Visible, generous keyboard focus everywhere — required for WCAG 2.2 AA

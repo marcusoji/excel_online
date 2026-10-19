@@ -56,3 +56,21 @@ export async function touchLessonVisit(lessonId: string): Promise<void> {
     lastVisitedAt: Date.now(),
   });
 }
+
+/**
+ * Remembers the furthest step a learner has reached so a part-finished lesson
+ * can be resumed later. Only ever moves forward, so revisiting an earlier step
+ * doesn't erase progress.
+ */
+export async function recordStepProgress(lessonId: string, stepIndex: number): Promise<void> {
+  const existing = await db.lessonProgress.get(lessonId);
+  const best = Math.max(existing?.bestStepIndex ?? 0, stepIndex);
+  if (existing && existing.bestStepIndex === best && existing.lastVisitedAt) return;
+  await db.lessonProgress.put({
+    lessonId,
+    completed: existing?.completed ?? false,
+    bestStepIndex: best,
+    completedAt: existing?.completedAt,
+    lastVisitedAt: Date.now(),
+  });
+}

@@ -29,7 +29,12 @@ To preview the built site: `python3 -m http.server 12000 --directory out`.
 - `src/lib/formulaEngine.ts` — hand-rolled tokenizer/parser/evaluator.
 - `src/lib/gridActions.ts` — pure Fill Down / Sort / AutoSum transforms.
 - `src/lib/formulaShift.ts` — relative-vs-absolute reference shifting on copy.
+- `src/lib/lessonRunner.ts` — shared step check (`checkStepPasses`) and the
+  resume helpers (`rebuildGridUpTo`, `selectedCellForStep`). Used by both the
+  lesson player and `verify-curriculum.ts` so the two cannot drift.
 - `src/components/LessonPlayer.tsx` — lesson runner: brief → steps → complete.
+  Resumes a part-finished lesson from `bestStepIndex`, rebuilding the sheet by
+  replaying earlier steps' deterministic effects.
 - `src/components/InteractiveSpreadsheet.tsx` — the grid (formula bar, Fill
   Down, validation dropdowns, conditional formatting, banded Tables).
 - `scripts/verify-curriculum.ts` — the regression check described above.
