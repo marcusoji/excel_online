@@ -2,7 +2,15 @@
 // Shared types for Excel Magic Academy
 // ---------------------------------------------------------------------------
 
-export type AppMode = "kid" | "pro";
+/**
+ * Visual "density" the learner has chosen. Both modes now serve the same
+ * adult, professional curriculum — they only change how much chrome the
+ * workspace shows, not how serious the material is.
+ *
+ *   focus   → a calm, roomy reading surface: bigger cells, softer palette
+ *   analyst → a denser, keyboard-first grid: tighter cells, more visible at once
+ */
+export type AppMode = "focus" | "analyst";
 export type ThemePreference = "light" | "dark" | "system";
 
 /** A single spreadsheet cell as the learner has left it. */
@@ -80,6 +88,11 @@ export interface LessonStep {
   id: string;
   /** Short instruction shown in the side panel. Keep it one or two sentences. */
   instruction: string;
+  /**
+   * The specific, checkable skill this step builds, shown as a caption above
+   * the instruction. One short noun phrase, e.g. "Aggregate with SUM".
+   */
+  objective?: string;
   /** Optional extra hint revealed if the learner asks for help. */
   hint?: string;
   /** Cells to highlight/pulse while this step is active. */
@@ -112,6 +125,13 @@ export interface Lesson {
   title: string;
   /** One friendly sentence describing the mission. */
   tagline: string;
+  /**
+   * The professional scenario this lesson simulates — the "why this matters
+   * at work" framing shown on the lesson briefing screen.
+   */
+  brief: string;
+  /** The concrete, professional skills this lesson teaches, as short bullets. */
+  objectives: string[];
   /** Emoji used as the lesson's badge icon — keeps the app asset-free. */
   icon: string;
   xp: number;
@@ -144,7 +164,10 @@ export interface Level {
   id: LevelId;
   order: number;
   title: string;
-  ageRange: string;
+  /** Who this level is for professionally, e.g. "New to spreadsheets". */
+  audience: string;
+  /** Short label for the tooling tier this level unlocks, e.g. "Foundations". */
+  tier: string;
   description: string;
   color: "owl" | "sky" | "coral" | "gold";
   lessonIds: string[];

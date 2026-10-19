@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s · Excel Magic Academy",
   },
   description:
-    "Learn Microsoft Excel the magical way — from your very first colored cell to real office dashboards. Fun for kids, sharp for pros, and it works offline.",
+    "A hands-on, five-level Excel curriculum for professionals — from cell references and SUM to XLOOKUP, dynamic arrays, and macros. Practice in a live grid, offline, on any device.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

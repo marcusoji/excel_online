@@ -24,13 +24,15 @@ export default function CheatSheetPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mb-2">Formula cheat sheet</h1>
-      <p className="text-slate-500 dark:text-slate-300 mb-6">Search any function you&rsquo;ve learned — or peek ahead at what&rsquo;s coming.</p>
+      <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mb-2">Formula reference</h1>
+      <p className="text-slate-500 dark:text-slate-300 mb-6">
+        Search the functions you&rsquo;ve covered — syntax, what it does, and where you&rsquo;d actually use it.
+      </p>
 
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search SUM, IF, lookup…"
+        placeholder="Search SUM, XLOOKUP, reference…"
         aria-label="Search formulas"
         className="w-full rounded-2xl border-2 border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-3 text-ink dark:text-slate-50 outline-none focus:border-owl-400 mb-3"
       />
@@ -64,6 +66,12 @@ export default function CheatSheetPage() {
               </div>
               <code className="block mt-1 font-mono text-sm text-sky-600 dark:text-sky-400">{entry.syntax}</code>
               <p className="text-sm text-slate-500 dark:text-slate-300 mt-2">{entry.description}</p>
+              {entry.useCase && (
+                <p className="text-xs text-slate-500 dark:text-slate-300 mt-2">
+                  <span className="font-semibold text-ink dark:text-slate-50">Use it for: </span>
+                  {entry.useCase}
+                </p>
+              )}
               <p className="text-xs text-slate-500 dark:text-slate-300 mt-2 bg-slate-25 dark:bg-slate-925 rounded-lg px-2 py-1.5 font-mono">
                 {entry.example}
               </p>

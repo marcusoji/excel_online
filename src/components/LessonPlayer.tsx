@@ -76,6 +76,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
   const [grid, setGrid] = useState<GridData>(() => structuredClone(lesson.initialGrid));
   const [selectedCell, setSelectedCell] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
+  const [phase, setPhase] = useState<"brief" | "playing">("brief");
   const [isPlayingDemo, setIsPlayingDemo] = useState(false);
   const [feedback, setFeedback] = useState<"idle" | "success" | "retry">("idle");
   const [showHint, setShowHint] = useState(false);
@@ -93,6 +94,16 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
   useEffect(() => {
     void touchLessonVisit(lesson.id);
   }, [lesson.id]);
+
+  function resetLesson() {
+    setGrid(structuredClone(lesson.initialGrid));
+    setSelectedCell(null);
+    setStepIndex(0);
+    setFeedback("idle");
+    setShowHint(false);
+    setMacroLog([]);
+    setPhase("brief");
+  }
 
   function logMacro(line: string) {
     if (lesson.isMacroLesson) setMacroLog((log) => [...log, line]);
@@ -245,6 +256,55 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
 
   if (!currentStep) return null;
 
+  if (phase === "brief") {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-8">
+        <Link href="/dashboard/" className="text-sm font-semibold text-slate-500 dark:text-slate-300 hover:text-owl-600">
+          ← Learning path
+        </Link>
+
+        <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-slate-500 dark:text-slate-300">
+          <span>{level ? `Level ${level.order} · ${level.title}` : "Lesson"}</span>
+          <span aria-hidden>·</span>
+          <span>{lesson.estMinutes} min</span>
+          <span aria-hidden>·</span>
+          <span>⭐ {lesson.xp} XP</span>
+        </div>
+
+        <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mt-2 mb-2">
+          {lesson.icon} {lesson.title}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-300 mb-6">{lesson.tagline}</p>
+
+        <section className="rounded-2xl border border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 p-5 mb-4">
+          <h2 className="font-display font-bold text-ink dark:text-slate-50 mb-2">The scenario</h2>
+          <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">{lesson.brief}</p>
+        </section>
+
+        <section className="rounded-2xl border border-owl-200 dark:border-owl-500/30 bg-owl-50 dark:bg-owl-500/10 p-5 mb-8">
+          <h2 className="font-display font-bold text-ink dark:text-slate-50 mb-3">What you&rsquo;ll practise</h2>
+          <ul className="space-y-2">
+            {lesson.objectives.map((objective) => (
+              <li key={objective} className="flex items-start gap-2 text-sm text-ink dark:text-slate-50">
+                <span aria-hidden className="text-owl-600 dark:text-owl-300">
+                  ✓
+                </span>
+                <span>{objective}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <Button variant="primary" size="lg" fullWidth onClick={() => setPhase("playing")}>
+          Start the walkthrough →
+        </Button>
+        <p className="text-xs text-slate-500 dark:text-slate-300 mt-3 text-center">
+          {lesson.steps.length} steps. You can restart at any time from the lesson header.
+        </p>
+      </div>
+    );
+  }
+
   const progressPct = Math.round((stepIndex / lesson.steps.length) * 100);
   const isAutoStep = currentStep.check.type === "auto";
 
@@ -260,6 +320,13 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
         <span className="text-xs font-semibold text-slate-500 dark:text-slate-300 whitespace-nowrap">
           {stepIndex + 1} / {lesson.steps.length}
         </span>
+        <button
+          type="button"
+          onClick={resetLesson}
+          className="text-xs font-semibold text-slate-500 dark:text-slate-300 hover:text-coral-600 whitespace-nowrap"
+        >
+          ↺ Restart
+        </button>
       </div>
 
       <h1 className="font-display text-2xl font-bold text-ink dark:text-slate-50 mb-1">
@@ -281,6 +348,11 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
                 feedback === "retry" ? "border-coral-500 bg-coral-400/5" : "border-owl-200 bg-owl-50 dark:bg-owl-500/10 dark:border-owl-500/30",
               ].join(" ")}
             >
+              {currentStep.objective && (
+                <p className="text-[11px] font-bold uppercase tracking-wide text-owl-700 dark:text-owl-300 mb-2">
+                  {currentStep.objective}
+                </p>
+              )}
               <p className="font-body text-base font-semibold text-ink dark:text-slate-50 leading-snug">{currentStep.instruction}</p>
 
               {showHint && currentStep.hint && (
@@ -289,7 +361,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
                 </p>
               )}
 
-              {feedback === "retry" && <p className="mt-3 text-sm font-semibold text-coral-600">Not quite — give it another try!</p>}
+              {feedback === "retry" && <p className="mt-3 text-sm font-semibold text-coral-600">Not quite — check the formula and try again.</p>}
 
               <div className="flex flex-wrap gap-2 mt-4">
                 {currentStep.demo && (
@@ -322,7 +394,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
                 onClick={handleConfirm}
                 disabled={isPlayingDemo}
               >
-                {isAutoStep ? "Got it! →" : feedback === "success" ? "Nailed it! ✓" : "I did it! ✓"}
+                {isAutoStep ? "Got it →" : feedback === "success" ? "Correct ✓" : "Check my answer"}
               </Button>
             </motion.div>
           </AnimatePresence>

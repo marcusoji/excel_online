@@ -1,9 +1,9 @@
 # Excel Magic Academy 🪄
 
-A pure-frontend, offline-first Progressive Web App that teaches Excel from
-age 6 to office-professional level — Duolingo-style joy for kids, a calmer
-Notion-style workspace for adults, and a real, live-calculating spreadsheet
-grid at the center of every lesson.
+A pure-frontend, offline-first Progressive Web App that teaches practical,
+professional Excel skills — a five-level curriculum built around real
+workplace tasks, with a real, live-calculating spreadsheet grid at the center
+of every lesson.
 
 **Everything lives on the learner's device.** There's no backend, no
 database, no accounts. XP, streaks, badges, and completed lessons are all
@@ -15,11 +15,19 @@ stored in the browser's IndexedDB via [Dexie.js](https://dexie.org/).
 
 Every level is complete: **15 fully interactive lessons, 3 per level, across all 5 levels** — nothing is a placeholder or a "coming soon" card.
 
-- **Level 0 — Excel Playground:** Magic Color Boxes · The Toy Box Add-Up · The SUM Spell
-- **Level 1 — Young Explorer:** Rows, Ranges & the Class Average · Pocket Money Journal (fill handle) · Field Day Scoreboard (AutoSum, Sort, a live chart)
-- **Level 2 — Junior Wizard:** Locking Cells in Place (absolute references) · Inventory Detective (COUNTIF/SUMIF + Data Validation) · Lookup Wizard (XLOOKUP + Conditional Formatting + Tables + Freeze Panes)
-- **Level 3 — Office Apprentice:** Nested Formulas & Protecting Your Work · Named Ranges & the Sales Total · Mini Pivot & Sparkline Dashboard
-- **Level 4 — Office Professional:** Data Cleanup Crew (a Power Query preview) · Dynamic Arrays · Record Your First Macro
+Each lesson opens with a professional **briefing** (the workplace scenario and
+what you'll practise), then walks you through it step by step in a live grid.
+Every step is labelled with the specific skill it builds, and every lesson can
+be restarted at any point.
+
+- **Level 0 — Spreadsheet Foundations:** The Grid, Cells & Cell References · Formulas & Operator Precedence · SUM & Ranges
+- **Level 1 — Data Literacy & Core Functions:** Core Statistics (AVERAGE/MIN/MAX/COUNT) · Relative References & the Fill Handle · Logic with IF & Live Reporting
+- **Level 2 — Data Integrity & Lookups:** Absolute vs. Relative References · Conditional Aggregation (COUNTIF/SUMIF + Data Validation) · XLOOKUP, Tables & Conditional Formatting
+- **Level 3 — Business Analysis:** Nested Logic & Input Protection · Named Ranges & Readable Formulas · Grouping Data (Pivot & Sparkline Dashboard)
+- **Level 4 — Professional Tooling & Automation:** Cleaning Messy Data (TRIM/PROPER) · Dynamic Arrays & Spill · Recording a Repeatable Macro
+
+There's also a free **Practice workspace** (`/practice/`) — an ungraded sandbox
+for trying formulas against your own numbers, with a live cell inspector.
 
 **Built, not stubbed:**
 - A hand-rolled formula engine (`src/lib/formulaEngine.ts`) supporting `SUM`, `AVERAGE`, `MAX`, `MIN`, `COUNT`, `COUNTIF`, `SUMIF`, `IF`, `ROUND`, `XLOOKUP`, `TRIM`/`UPPER`/`LOWER`/`PROPER`/`CONCAT`/`LEN`/`LEFT`/`RIGHT`/`MID`, a simplified `SORT`, named-range substitution, and real absolute-vs-relative reference handling — genuine calculation, not a canned answer key.
@@ -27,7 +35,7 @@ Every level is complete: **15 fully interactive lessons, 3 per level, across all
 - Dexie-backed progress, XP, streaks, and badges — every level and lesson earns its own badge automatically.
 - A real service worker with a build-time-generated precache manifest — the whole exported site (all 15 lessons) works offline after one visit.
 - Downloadable `.xlsx` practice files (via SheetJS) generated from each lesson's live grid, with named ranges resolved so the exported formulas stay valid in real Excel.
-- A searchable formula cheat sheet and a printable certificates page (one certificate per completed level).
+- A searchable formula reference (with a "use it for" note on each entry) and a printable certificates page (one certificate per completed level).
 
 **Honest simplifications — real features, deliberately scoped down rather than faked:**
 A few desktop-Excel features don't have a full browser equivalent, so this build teaches the underlying idea with genuine, live computation rather than a static mock:

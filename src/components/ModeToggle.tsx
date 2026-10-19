@@ -2,13 +2,17 @@
 
 import { usePreferences } from "@/hooks/useProgress";
 
+/**
+ * Density toggle. The curriculum is the same either way — this only changes
+ * how much of the workspace is visible at once.
+ */
 export function ModeToggle() {
   const { preferences, setMode, setTheme } = usePreferences();
 
   return (
     <div className="flex items-center gap-2">
-      <div className="flex rounded-full bg-slate-150 dark:bg-slate-750 p-1" role="radiogroup" aria-label="App mode">
-        {(["kid", "pro"] as const).map((m) => (
+      <div className="flex rounded-full bg-slate-150 dark:bg-slate-750 p-1" role="radiogroup" aria-label="Workspace density">
+        {(["focus", "analyst"] as const).map((m) => (
           <button
             key={m}
             role="radio"
@@ -19,7 +23,7 @@ export function ModeToggle() {
               preferences.mode === m ? "bg-white dark:bg-slate-925 text-owl-600 dark:text-owl-300 shadow-card" : "text-slate-500 dark:text-slate-300",
             ].join(" ")}
           >
-            {m === "kid" ? "🌟 Kid" : "💼 Pro"}
+            {m === "focus" ? "Focus" : "Analyst"}
           </button>
         ))}
       </div>

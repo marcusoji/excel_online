@@ -88,9 +88,9 @@ export function InteractiveSpreadsheet({
     return { minRow: Math.min(start.row, end.row), maxRow: Math.max(start.row, end.row) };
   }, [bandedRange]);
 
-  const isKid = mode === "kid";
-  const cellSizeClass = isKid ? "min-w-[76px] h-12 text-[15px]" : "min-w-[92px] h-9 text-[13px]";
-  const rowHeaderWidth = isKid ? "w-10" : "w-8";
+  const isRoomy = mode === "focus";
+  const cellSizeClass = isRoomy ? "min-w-[84px] h-10 text-[14px]" : "min-w-[92px] h-9 text-[13px]";
+  const rowHeaderWidth = isRoomy ? "w-9" : "w-8";
 
   function commit(cellId: string) {
     if (draft !== null) {
@@ -152,7 +152,7 @@ export function InteractiveSpreadsheet({
       <div className="overflow-auto rounded-2xl border border-slate-150 dark:border-slate-750 max-h-[60vh]">
         <div
           className="grid w-max"
-          style={{ gridTemplateColumns: `${isKid ? "2.5rem" : "2rem"} repeat(${cols}, minmax(0, auto))` }}
+          style={{ gridTemplateColumns: `${isRoomy ? "2.25rem" : "2rem"} repeat(${cols}, minmax(0, auto))` }}
         >
           {/* Corner + column headers stay put while scrolling — this is exactly
               what "Freeze Panes" does in real Excel, just always on here. */}

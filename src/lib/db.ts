@@ -30,6 +30,25 @@ export class ExcelMagicDB extends Dexie {
       preferences: "id",
       xpLog: "++id, day, at",
     });
+    // The app used to offer "kid"/"pro" visual modes. It's now a single adult
+    // curriculum with two density modes, so any stored preference is migrated
+    // to the equivalent new value rather than silently rendering an unknown mode.
+    this.version(2)
+      .stores({
+        lessonProgress: "lessonId, completed, lastVisitedAt",
+        badges: "badgeId, earnedAt",
+        preferences: "id",
+        xpLog: "++id, day, at",
+      })
+      .upgrade(async (tx) => {
+        await tx
+          .table("preferences")
+          .toCollection()
+          .modify((prefs: { mode?: string }) => {
+            if (prefs.mode === "kid") prefs.mode = "focus";
+            else if (prefs.mode === "pro") prefs.mode = "analyst";
+          });
+      });
   }
 }
 
@@ -39,12 +58,12 @@ export const db = new ExcelMagicDB();
 
 export const DEFAULT_PREFERENCES: Preferences = {
   id: "singleton",
-  mode: "kid",
+  mode: "focus",
   theme: "system",
   reducedMotion: false,
   soundOn: true,
   hasOnboarded: false,
-  displayName: "Explorer",
+  displayName: "Learner",
   streakDays: 0,
 };
 

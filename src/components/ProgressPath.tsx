@@ -37,9 +37,10 @@ export function ProgressPath({ progressByLessonId }: ProgressPathProps) {
               <h2 className="font-display text-lg font-bold text-ink dark:text-slate-50">
                 Level {level.order} · {level.title}
               </h2>
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">{level.ageRange}</span>
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">{level.tier}</span>
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{level.description}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-300 mt-1.5">{level.audience}</p>
           </div>
 
           {level.lessonIds.length === 0 ? (

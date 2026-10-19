@@ -14,7 +14,8 @@ export default function CertificatePage() {
     <div className="max-w-2xl mx-auto px-4 py-8">
       <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mb-2 no-print">My certificates</h1>
       <p className="text-slate-500 dark:text-slate-300 mb-8 no-print">
-        Finish every lesson in a level to earn a certificate here. Each one is yours to print or save as a PDF.
+        Complete every lesson in a level to earn a certificate. Each one is yours to print or save as a PDF — useful
+        for a learning log or a professional development record.
       </p>
 
       {earnedCertificates.length === 0 ? (

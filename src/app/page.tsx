@@ -40,23 +40,23 @@ function useInstallPrompt() {
 
 const MODE_CARDS: { mode: AppMode; title: string; description: string; emoji: string }[] = [
   {
-    mode: "kid",
-    title: "Young Explorer",
-    description: "Bright colors, toy-box examples, and confetti every time you level up.",
-    emoji: "🌟",
+    mode: "focus",
+    title: "Focus",
+    description: "A roomier, calmer workspace with larger cells — good for reading and working step by step.",
+    emoji: "🎯",
   },
   {
-    mode: "pro",
-    title: "Office Toolkit",
-    description: "A calmer, denser workspace built for real formulas and real work.",
-    emoji: "💼",
+    mode: "analyst",
+    title: "Analyst",
+    description: "A denser, keyboard-first grid that fits more rows and columns on screen at once.",
+    emoji: "📐",
   },
 ];
 
 export default function OnboardingPage() {
   const router = useRouter();
   const { preferences, ready, completeOnboarding } = usePreferences();
-  const [selectedMode, setSelectedMode] = useState<AppMode>("kid");
+  const [selectedMode, setSelectedMode] = useState<AppMode>("focus");
   const [name, setName] = useState("");
   const isIOS = useIsIOS();
   const { canInstall, promptInstall } = useInstallPrompt();
@@ -68,7 +68,7 @@ export default function OnboardingPage() {
   }, [ready, preferences.hasOnboarded, router]);
 
   async function handleStart() {
-    await completeOnboarding(selectedMode, name.trim() || "Explorer");
+    await completeOnboarding(selectedMode, name.trim() || "Learner");
     router.push("/dashboard/");
   }
 
@@ -80,16 +80,32 @@ export default function OnboardingPage() {
             🪄
           </div>
           <h1 className="font-display text-4xl font-bold text-ink dark:text-slate-50 leading-tight">
-            Turn spreadsheets into your favorite subject.
+            Excel skills you can actually use at work.
           </h1>
           <p className="mt-4 text-lg text-slate-500 dark:text-slate-300">
-            Excel Magic Academy teaches real spreadsheet skills through playful, hands-on lessons — colorful enough
-            for a six-year-old, sharp enough for the office. Everything happens right here, even offline.
+            A hands-on, five-level curriculum built around real workplace tasks — from cell references and SUM to
+            XLOOKUP, dynamic arrays, and recording your first macro. No account, no backend; your progress is saved on
+            this device and works offline.
           </p>
+          <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+            {[
+              "15 guided lessons across 5 levels",
+              "A live spreadsheet grid in every lesson",
+              "Real formula engine — not canned answers",
+              "Downloadable .xlsx practice files",
+            ].map((item) => (
+              <li key={item} className="flex items-center gap-2 text-sm text-ink dark:text-slate-50">
+                <span aria-hidden className="text-owl-600 dark:text-owl-300">
+                  ✓
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </motion.div>
 
         <div>
-          <h2 className="font-display text-lg font-bold text-ink dark:text-slate-50 mb-3">Choose how it looks for you</h2>
+          <h2 className="font-display text-lg font-bold text-ink dark:text-slate-50 mb-3">Choose your workspace density</h2>
           <div className="grid sm:grid-cols-2 gap-3">
             {MODE_CARDS.map((card) => (
               <button
@@ -109,27 +125,27 @@ export default function OnboardingPage() {
               </button>
             ))}
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-300 mt-2">You can switch modes anytime from the top bar.</p>
+          <p className="text-xs text-slate-500 dark:text-slate-300 mt-2">
+            The curriculum is identical either way — you can switch density anytime from the top bar.
+          </p>
         </div>
 
-        {selectedMode === "kid" && (
-          <div>
-            <label htmlFor="explorer-name" className="block font-display font-bold text-ink dark:text-slate-50 mb-2">
-              What should we call you?
-            </label>
-            <input
-              id="explorer-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Explorer"
-              className="w-full rounded-2xl border-2 border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-3 text-ink dark:text-slate-50 outline-none focus:border-owl-400"
-              maxLength={24}
-            />
-          </div>
-        )}
+        <div>
+          <label htmlFor="learner-name" className="block font-display font-bold text-ink dark:text-slate-50 mb-2">
+            What should we call you? (used on your certificates)
+          </label>
+          <input
+            id="learner-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Learner"
+            className="w-full rounded-2xl border-2 border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-3 text-ink dark:text-slate-50 outline-none focus:border-owl-400"
+            maxLength={32}
+          />
+        </div>
 
         <Button variant="primary" size="lg" onClick={handleStart}>
-          Start my Excel adventure →
+          Start the curriculum →
         </Button>
 
         <section className="rounded-2xl bg-slate-25 dark:bg-slate-925 border border-slate-150 dark:border-slate-750 p-5">
