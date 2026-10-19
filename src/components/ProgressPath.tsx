@@ -11,8 +11,6 @@ const LEVEL_ACCENT: Record<string, string> = {
   gold: "border-gold-400/40 bg-gold-400/10",
 };
 
-const NODE_SIDE = ["self-start ml-2", "self-center", "self-end mr-2"];
-
 interface ProgressPathProps {
   progressByLessonId: Record<string, LessonProgress>;
 }
@@ -30,77 +28,97 @@ export function ProgressPath({ progressByLessonId }: ProgressPathProps) {
 
   return (
     <div className="flex flex-col gap-10">
-      {LEVELS.map((level) => (
-        <section key={level.id}>
-          <div className={`rounded-2xl border px-4 py-3 mb-4 ${LEVEL_ACCENT[level.color]}`}>
-            <div className="flex items-baseline justify-between gap-2">
-              <h2 className="font-display text-lg font-bold text-ink dark:text-slate-50">
-                Level {level.order} · {level.title}
-              </h2>
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-300">{level.tier}</span>
+      {LEVELS.map((level) => {
+        const done = level.lessonIds.filter((id) => progressByLessonId[id]?.completed).length;
+        return (
+          <section key={level.id}>
+            <div className={`rounded-2xl border px-4 py-3 mb-4 ${LEVEL_ACCENT[level.color]}`}>
+              <div className="flex items-baseline justify-between gap-2">
+                <h2 className="font-display text-lg font-bold text-ink dark:text-slate-50">
+                  Level {level.order} · {level.title}
+                </h2>
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{level.description}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-300 mt-1.5">
+                {done}/{level.lessonIds.length} complete
+              </p>
             </div>
-            <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{level.description}</p>
-            <p className="text-xs text-slate-500 dark:text-slate-300 mt-1.5">{level.audience}</p>
-          </div>
 
-          {level.lessonIds.length === 0 ? (
-            <div className="rounded-2xl border-2 border-dashed border-slate-150 dark:border-slate-750 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-300">
-              Coming soon — this level is mapped out and on the way.
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6 py-2">
-              {level.lessonIds.map((lessonId, i) => {
-                const lesson = orderedLessons.find((l) => l.id === lessonId);
-                if (!lesson) return null;
-                const unlocked = isUnlocked(lessonId);
-                const progress = progressByLessonId[lessonId];
-                const completed = progress?.completed ?? false;
-                const side = NODE_SIDE[i % NODE_SIDE.length];
+            {level.lessonIds.length === 0 ? (
+              <div className="rounded-2xl border-2 border-dashed border-slate-150 dark:border-slate-750 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-300">
+                Coming soon.
+              </div>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {level.lessonIds.map((lessonId, lessonIndex) => {
+                  const lesson = orderedLessons.find((l) => l.id === lessonId);
+                  if (!lesson) return null;
+                  const unlocked = isUnlocked(lessonId);
+                  const completed = progressByLessonId[lessonId]?.completed ?? false;
 
-                const node = (
-                  <div
-                    className={[
-                      "flex flex-col items-center gap-2 w-24",
-                      side,
-                    ].join(" ")}
-                  >
+                  const inner = (
                     <div
                       className={[
-                        "h-16 w-16 rounded-full flex items-center justify-center text-2xl border-4 transition-transform",
-                        completed
-                          ? "bg-owl-500 border-owl-600 text-white shadow-press shadow-owl-700"
-                          : unlocked
-                            ? "bg-white dark:bg-slate-850 border-owl-400 text-ink dark:text-slate-50 animate-cell-pulse"
-                            : "bg-slate-150 dark:bg-slate-750 border-slate-150 dark:border-slate-750 text-slate-500 grayscale",
+                        "flex items-center gap-4 rounded-2xl border px-4 py-3 transition-colors",
+                        unlocked
+                          ? "border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 hover:border-owl-300"
+                          : "border-slate-150 dark:border-slate-750 bg-slate-25 dark:bg-slate-925 opacity-70",
                       ].join(" ")}
                     >
-                      {completed ? "✓" : unlocked ? lesson.icon : "🔒"}
+                      <span
+                        aria-hidden
+                        className={[
+                          "h-9 w-9 shrink-0 rounded-full flex items-center justify-center text-sm font-bold border-2",
+                          completed
+                            ? "bg-owl-500 border-owl-500 text-white"
+                            : unlocked
+                              ? "border-owl-400 text-owl-700 dark:text-owl-300"
+                              : "border-slate-150 dark:border-slate-750 text-slate-400",
+                        ].join(" ")}
+                      >
+                        {completed ? (
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                            <path d="M20 6L9 17l-5-5" />
+                          </svg>
+                        ) : unlocked ? (
+                          lessonIndex + 1
+                        ) : (
+                          "—"
+                        )}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-ink dark:text-slate-50 truncate">{lesson.title}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-300 truncate">{lesson.tagline}</p>
+                      </div>
+                      <span className="shrink-0 text-xs font-semibold text-slate-500 dark:text-slate-300">
+                        {completed ? "Completed" : unlocked ? `${lesson.estMinutes} min` : "Locked"}
+                      </span>
                     </div>
-                    <span className="text-xs font-semibold text-center text-ink dark:text-slate-50 leading-tight">
-                      {lesson.title}
-                    </span>
-                  </div>
-                );
+                  );
 
-                return unlocked ? (
-                  <Link
-                    key={lessonId}
-                    href={`/lessons/${level.id}/${lessonId}/`}
-                    className="focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500 rounded-2xl"
-                    aria-label={`${completed ? "Replay" : "Start"} lesson: ${lesson.title}`}
-                  >
-                    {node}
-                  </Link>
-                ) : (
-                  <div key={lessonId} aria-disabled className="cursor-not-allowed opacity-90">
-                    {node}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </section>
-      ))}
+                  return (
+                    <li key={lessonId}>
+                      {unlocked ? (
+                        <Link
+                          href={`/lessons/${level.id}/${lessonId}/`}
+                          className="block rounded-2xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500"
+                          aria-label={`${completed ? "Replay" : "Start"} lesson: ${lesson.title}`}
+                        >
+                          {inner}
+                        </Link>
+                      ) : (
+                        <div aria-disabled className="cursor-not-allowed">
+                          {inner}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </section>
+        );
+      })}
     </div>
   );
 }

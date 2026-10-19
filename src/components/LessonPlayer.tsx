@@ -3,9 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import type { GridData, Lesson, BadgeDefinition } from "@/types";
+import type { GridData, Lesson } from "@/types";
 import { InteractiveSpreadsheet } from "@/components/InteractiveSpreadsheet";
-import { Confetti } from "@/components/Confetti";
 import { Button } from "@/components/Button";
 import { MiniBarChart } from "@/components/MiniBarChart";
 import { PivotPreview } from "@/components/PivotPreview";
@@ -81,8 +80,6 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
   const [feedback, setFeedback] = useState<"idle" | "success" | "retry">("idle");
   const [showHint, setShowHint] = useState(false);
   const [lessonComplete, setLessonComplete] = useState(false);
-  const [earnedBadges, setEarnedBadges] = useState<BadgeDefinition[]>([]);
-  const [showConfetti, setShowConfetti] = useState(false);
   const [macroLog, setMacroLog] = useState<string[]>([]);
 
   const currentStep = lesson.steps[stepIndex];
@@ -177,11 +174,8 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
       setStepIndex((i) => i + 1);
       setSelectedCell(null);
     } else {
-      const badges = await completeLesson(lesson.id, lesson.xp);
-      setEarnedBadges(badges);
+      await completeLesson(lesson.id);
       setLessonComplete(true);
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 1800);
     }
   }
 
@@ -198,38 +192,23 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
 
   if (lessonComplete) {
     return (
-      <div className="max-w-xl mx-auto px-4 py-10 text-center">
-        {showConfetti && <Confetti reducedMotion={preferences.reducedMotion} />}
-        <div className="text-6xl mb-4">{lesson.icon}</div>
-        <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mb-2">Lesson complete!</h1>
-        <p className="text-slate-500 dark:text-slate-300 mb-6">{lesson.celebration}</p>
-
-        <div className="inline-flex items-center gap-2 rounded-full bg-gold-300/40 dark:bg-gold-500/20 px-4 py-2 font-bold text-ink dark:text-gold-300 mb-6">
-          ⭐ +{lesson.xp} XP
+      <div className="max-w-xl mx-auto px-4 py-10">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center h-14 w-14 rounded-full bg-owl-50 dark:bg-owl-500/10 border-2 border-owl-300 text-owl-700 dark:text-owl-300 mb-4">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
+          <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mb-2">Lesson complete</h1>
+          <p className="text-slate-500 dark:text-slate-300 mb-6">{lesson.celebration}</p>
         </div>
 
         {lesson.isMacroLesson && (
           <div className="mb-8 text-left">
             <p className="text-sm font-semibold text-slate-500 dark:text-slate-300 mb-2">
-              📼 Here&rsquo;s the macro Excel would have recorded from what you just did:
+              The macro Excel would have recorded from what you just did:
             </p>
             <MacroLog lines={macroLog} />
-          </div>
-        )}
-
-        {earnedBadges.length > 0 && (
-          <div className="mb-8">
-            <p className="text-sm font-semibold text-slate-500 dark:text-slate-300 mb-3">New badge{earnedBadges.length > 1 ? "s" : ""} earned</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {earnedBadges.map((badge) => (
-                <div key={badge.id} className="flex flex-col items-center gap-1 w-24">
-                  <div className="h-14 w-14 rounded-full bg-owl-50 dark:bg-owl-500/10 border-2 border-owl-300 flex items-center justify-center text-2xl">
-                    {badge.icon}
-                  </div>
-                  <span className="text-xs font-semibold text-ink dark:text-slate-50 text-center leading-tight">{badge.name}</span>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
@@ -242,7 +221,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
             </Link>
           )}
           <Button variant="secondary" size="md" fullWidth onClick={() => downloadLessonWorkbook(lesson, grid)}>
-            ⬇ Download practice .xlsx
+            Download practice .xlsx
           </Button>
           <Link href="/dashboard/">
             <Button variant="ghost" size="md" fullWidth>
@@ -267,12 +246,10 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
           <span>{level ? `Level ${level.order} · ${level.title}` : "Lesson"}</span>
           <span aria-hidden>·</span>
           <span>{lesson.estMinutes} min</span>
-          <span aria-hidden>·</span>
-          <span>⭐ {lesson.xp} XP</span>
         </div>
 
         <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50 mt-2 mb-2">
-          {lesson.icon} {lesson.title}
+          {lesson.title}
         </h1>
         <p className="text-slate-500 dark:text-slate-300 mb-6">{lesson.tagline}</p>
 
@@ -286,8 +263,10 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
           <ul className="space-y-2">
             {lesson.objectives.map((objective) => (
               <li key={objective} className="flex items-start gap-2 text-sm text-ink dark:text-slate-50">
-                <span aria-hidden className="text-owl-600 dark:text-owl-300">
-                  ✓
+                <span aria-hidden className="text-owl-600 dark:text-owl-300 shrink-0 mt-0.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
                 </span>
                 <span>{objective}</span>
               </li>
@@ -330,7 +309,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
       </div>
 
       <h1 className="font-display text-2xl font-bold text-ink dark:text-slate-50 mb-1">
-        {lesson.icon} {lesson.title}
+        {lesson.title}
       </h1>
       <p className="text-slate-500 dark:text-slate-300 mb-6">{lesson.tagline}</p>
 
@@ -357,7 +336,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
 
               {showHint && currentStep.hint && (
                 <p className="mt-3 text-sm text-slate-500 dark:text-slate-300 bg-white/60 dark:bg-slate-925/60 rounded-xl px-3 py-2">
-                  💡 {currentStep.hint}
+                  {currentStep.hint}
                 </p>
               )}
 
@@ -394,7 +373,7 @@ export function LessonPlayer({ lesson }: LessonPlayerProps) {
                 onClick={handleConfirm}
                 disabled={isPlayingDemo}
               >
-                {isAutoStep ? "Got it →" : feedback === "success" ? "Correct ✓" : "Check my answer"}
+                {isAutoStep ? "Got it →" : feedback === "success" ? "Correct" : "Check my answer"}
               </Button>
             </motion.div>
           </AnimatePresence>

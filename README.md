@@ -1,4 +1,4 @@
-# Excel Magic Academy 🪄
+# Excel Academy
 
 A pure-frontend, offline-first Progressive Web App that teaches practical,
 professional Excel skills — a five-level curriculum built around real
@@ -6,8 +6,8 @@ workplace tasks, with a real, live-calculating spreadsheet grid at the center
 of every lesson.
 
 **Everything lives on the learner's device.** There's no backend, no
-database, no accounts. XP, streaks, badges, and completed lessons are all
-stored in the browser's IndexedDB via [Dexie.js](https://dexie.org/).
+database, no accounts. Your completed lessons are stored in the browser's
+IndexedDB via [Dexie.js](https://dexie.org/).
 
 ---
 
@@ -32,7 +32,7 @@ for trying formulas against your own numbers, with a live cell inspector.
 **Built, not stubbed:**
 - A hand-rolled formula engine (`src/lib/formulaEngine.ts`) supporting `SUM`, `AVERAGE`, `MAX`, `MIN`, `COUNT`, `COUNTIF`, `SUMIF`, `IF`, `ROUND`, `XLOOKUP`, `TRIM`/`UPPER`/`LOWER`/`PROPER`/`CONCAT`/`LEN`/`LEFT`/`RIGHT`/`MID`, a simplified `SORT`, named-range substitution, and real absolute-vs-relative reference handling — genuine calculation, not a canned answer key.
 - A custom `InteractiveSpreadsheet` grid: formula bar, cell selection, live recalculation, cell coloring, a real **Fill Down** (the fill handle — shifts relative references, respects `$` locks), **Data Validation** dropdowns, **Conditional Formatting**, **Table** row banding, and sticky headers (a **Freeze Panes**-style effect, always on).
-- Dexie-backed progress, XP, streaks, and badges — every level and lesson earns its own badge automatically.
+- Dexie-backed lesson progress — completion is tracked per lesson and drives the curriculum list and certificates.
 - A real service worker with a build-time-generated precache manifest — the whole exported site (all 15 lessons) works offline after one visit.
 - Downloadable `.xlsx` practice files (via SheetJS) generated from each lesson's live grid, with named ranges resolved so the exported formulas stay valid in real Excel.
 - A searchable formula reference (with a "use it for" note on each entry) and a printable certificates page (one certificate per completed level).
@@ -47,7 +47,7 @@ A few desktop-Excel features don't have a full browser equivalent, so this build
 - **Macro Recording** → `MacroLog` genuinely replays the learner's own actions as pseudo-VBA (real action log, not a canned transcript); it's illustrative, not executable VBA.
 - **Power Query** → taught as its formula-level equivalent (`TRIM`/`PROPER`/`CONCAT`), framed explicitly as "here's what Power Query automates at scale."
 
-`src/lib/curriculum.ts` is the single source of truth for all of the above — every lesson, level description, and badge is defined there, so extending the curriculum further never requires touching the engine or UI components.
+`src/lib/curriculum.ts` is the single source of truth for all of the above — every lesson and level description is defined there, so extending the curriculum further never requires touching the engine or UI components.
 
 ---
 
@@ -76,7 +76,6 @@ src/
     formulaShift.ts          Shifts relative references for Fill Down (respects $ locks)
     gridActions.ts           Pure fill-down/sort/AutoSum transforms (shared by the app and by scripts/verify-curriculum.ts)
     db.ts                    Dexie schema
-    badges.ts                Badge rules (auto-derived from curriculum.ts)
   hooks/                   useProgress, useOnlineStatus
 public/
   manifest.json, sw.js, icons/
@@ -126,7 +125,7 @@ If you add new pages or lessons, you don't need to touch the service
 worker — just run `npm run build` and the manifest picks them up
 automatically.
 
-**iOS-specific notes (read before you rely on this for a kid's homework):**
+**iOS-specific notes (read before you rely on this for real work):**
 - iOS Safari does not implement the Background Sync API. This app doesn't
   need it — every write goes straight to IndexedDB the moment it happens —
   but don't add a "sync progress when back online" feature using
@@ -164,7 +163,7 @@ automatically.
 ```bash
 npm install -g wrangler
 npm run build
-wrangler pages deploy out --project-name=excel-magic-academy
+wrangler pages deploy out --project-name=excel-academy
 ```
 
 Both routes serve the same static files — there is no server runtime to configure.
@@ -182,7 +181,7 @@ Both routes serve the same static files — there is no server runtime to config
 
 **Windows / macOS (Chrome or Edge):**
 1. Open the deployed URL.
-2. Click the install icon in the address bar (or the "Install" prompt on the onboarding screen), or use the browser menu → **Install Excel Magic Academy**.
+2. Click the install icon in the address bar (or the "Install" prompt on the onboarding screen), or use the browser menu → **Install Excel Academy**.
 3. Launch it from the Start Menu / Applications, disconnect from the network, and confirm it still works.
 
 **macOS (Safari):**
@@ -229,7 +228,7 @@ Add a new lesson in three steps:
    `autoSumAction` to render an extra action button.
 2. Add its id to the right level's `lessonIds` array, in order.
 3. Run `npm run build` — the static route, the precache entry, the
-   learning-path node, and its badge all pick it up automatically.
+   learning-path entry, and its certificate all pick it up automatically.
 
 No other file needs to change for ordinary content additions. Run `npm run
 verify` afterward to confirm every step's check still passes.

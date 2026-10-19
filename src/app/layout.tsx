@@ -4,8 +4,8 @@ import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: {
-    default: "Excel Magic Academy",
-    template: "%s · Excel Magic Academy",
+    default: "Excel Academy",
+    template: "%s · Excel Academy",
   },
   description:
     "A hands-on, five-level Excel curriculum for professionals — from cell references and SUM to XLOOKUP, dynamic arrays, and macros. Practice in a live grid, offline, on any device.",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Excel Magic",
+    title: "Excel Academy",
   },
   // Next.js 15 stopped emitting the legacy "apple-mobile-web-app-capable" tag from
   // appleWebApp.capable (it now only emits the newer "mobile-web-app-capable").

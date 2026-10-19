@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Design tokens — Excel Magic Academy
+ * Design tokens — Excel Academy
  *
  * Kid Mode:  warm, tactile, Duolingo-adjacent. Owl-green primary, chunky
  *            "pressed button" shadows, generous rounding.

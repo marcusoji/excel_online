@@ -2,15 +2,13 @@
 
 import Link from "next/link";
 import { ProgressPath } from "@/components/ProgressPath";
-import { usePreferences, useAllLessonProgress, useTotalXp, useBadges } from "@/hooks/useProgress";
+import { usePreferences, useAllLessonProgress } from "@/hooks/useProgress";
 import { LEVELS, getAllLessonsInOrder } from "@/lib/curriculum";
 import type { LessonProgress } from "@/types";
 
 export default function DashboardPage() {
   const { preferences } = usePreferences();
   const allProgress = useAllLessonProgress();
-  const totalXp = useTotalXp();
-  const badges = useBadges();
 
   const progressByLessonId: Record<string, LessonProgress> = {};
   for (const p of allProgress ?? []) progressByLessonId[p.lessonId] = p;
@@ -21,20 +19,16 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50">
-            {completedCount === 0 ? "Your Excel learning path" : `Welcome back, ${preferences.displayName}`}
-          </h1>
-          <p className="text-slate-500 dark:text-slate-300 mt-1">
-            A professional Excel curriculum, from the grid to automation. {completedCount} of {totalLessons} lessons complete
-            {pctComplete > 0 ? ` (${pctComplete}%)` : ""}.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <StatPill icon="⭐" label="XP" value={totalXp} />
-          <StatPill icon="🔥" label="streak" value={preferences.streakDays} />
-          <StatPill icon="🏅" label="badges" value={(badges ?? []).length} />
+      <div className="mb-6">
+        <h1 className="font-display text-3xl font-bold text-ink dark:text-slate-50">
+          {completedCount === 0 ? "Excel curriculum" : `Welcome back, ${preferences.displayName}`}
+        </h1>
+        <p className="text-slate-500 dark:text-slate-300 mt-1">
+          A professional Excel curriculum, from the grid to automation. {completedCount} of {totalLessons} lessons complete
+          {pctComplete > 0 ? ` (${pctComplete}%)` : ""}.
+        </p>
+        <div className="mt-4 h-2 rounded-full bg-slate-150 dark:bg-slate-750 overflow-hidden" role="progressbar" aria-valuenow={pctComplete} aria-valuemin={0} aria-valuemax={100}>
+          <div className="h-full bg-owl-500 rounded-full transition-all" style={{ width: `${pctComplete}%` }} />
         </div>
       </div>
 
@@ -43,19 +37,19 @@ export default function DashboardPage() {
           href="/practice/"
           className="rounded-full border border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-2 text-sm font-semibold text-ink dark:text-slate-50 hover:border-owl-300"
         >
-          🧪 Practice workspace
+          Practice workspace
         </Link>
         <Link
           href="/cheatsheet/"
           className="rounded-full border border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-2 text-sm font-semibold text-ink dark:text-slate-50 hover:border-owl-300"
         >
-          📚 Formula reference
+          Formula reference
         </Link>
         <Link
           href="/certificate/"
           className="rounded-full border border-slate-150 dark:border-slate-750 bg-white dark:bg-slate-850 px-4 py-2 text-sm font-semibold text-ink dark:text-slate-50 hover:border-owl-300"
         >
-          🎓 My certificates
+          Certificates
         </Link>
       </div>
 
@@ -82,7 +76,7 @@ export default function DashboardPage() {
                       : "bg-slate-150 text-slate-500 dark:bg-slate-750 dark:text-slate-300",
                   ].join(" ")}
                 >
-                  {levelDone ? "✓ complete" : `${done}/${total}`}
+                  {levelDone ? "Complete" : `${done}/${total}`}
                 </span>
               </li>
             );
@@ -91,16 +85,6 @@ export default function DashboardPage() {
       </section>
 
       <ProgressPath progressByLessonId={progressByLessonId} />
-    </div>
-  );
-}
-
-function StatPill({ icon, label, value }: { icon: string; label: string; value: number }) {
-  return (
-    <div className="flex items-center gap-1.5 rounded-full bg-white dark:bg-slate-850 border border-slate-150 dark:border-slate-750 px-3 py-1.5">
-      <span aria-hidden>{icon}</span>
-      <span className="font-bold text-ink dark:text-slate-50 text-sm">{value}</span>
-      <span className="text-xs text-slate-500 dark:text-slate-300 hidden sm:inline">{label}</span>
     </div>
   );
 }

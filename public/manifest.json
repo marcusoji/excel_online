@@ -1,7 +1,7 @@
 {
-  "name": "Excel Magic Academy",
-  "short_name": "Excel Magic",
-  "description": "Learn Microsoft Excel the magical way — fun for kids, sharp for pros, and it works offline.",
+  "name": "Excel Academy",
+  "short_name": "Excel Academy",
+  "description": "A hands-on, five-level Excel curriculum for professionals — practice in a live grid, offline, on any device.",
   "id": "/",
   "start_url": "/?source=pwa",
   "scope": "/",
@@ -11,7 +11,7 @@
   "background_color": "#FFFBF2",
   "theme_color": "#2E9E5B",
   "lang": "en",
-  "categories": ["education", "productivity", "kids"],
+  "categories": ["education", "productivity", "business"],
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

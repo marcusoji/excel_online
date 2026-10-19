@@ -1,4 +1,4 @@
-// Excel Magic Academy — service worker
+// Excel Academy — service worker
 //
 // Design notes (please read before editing):
 //
@@ -22,7 +22,7 @@
 //    living "on this device" rather than promising permanence.
 
 const CACHE_VERSION = "v1"; // bump this on any deploy where cached assets should be invalidated
-const CACHE_NAME = `excel-magic-academy-${CACHE_VERSION}`;
+const CACHE_NAME = `excel-academy-${CACHE_VERSION}`;
 const OFFLINE_FALLBACK_URL = "/";
 
 self.addEventListener("install", (event) => {

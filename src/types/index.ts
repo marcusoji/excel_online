@@ -1,5 +1,5 @@
 // ---------------------------------------------------------------------------
-// Shared types for Excel Magic Academy
+// Shared types for Excel Academy
 // ---------------------------------------------------------------------------
 
 /**
@@ -132,9 +132,6 @@ export interface Lesson {
   brief: string;
   /** The concrete, professional skills this lesson teaches, as short bullets. */
   objectives: string[];
-  /** Emoji used as the lesson's badge icon — keeps the app asset-free. */
-  icon: string;
-  xp: number;
   estMinutes: number;
   /** Starting contents of the grid when the lesson loads. */
   initialGrid: GridData;
@@ -164,10 +161,6 @@ export interface Level {
   id: LevelId;
   order: number;
   title: string;
-  /** Who this level is for professionally, e.g. "New to spreadsheets". */
-  audience: string;
-  /** Short label for the tooling tier this level unlocks, e.g. "Foundations". */
-  tier: string;
   description: string;
   color: "owl" | "sky" | "coral" | "gold";
   lessonIds: string[];
@@ -180,15 +173,9 @@ export interface Level {
 export interface LessonProgress {
   lessonId: string; // primary key
   completed: boolean;
-  stars: 0 | 1 | 2 | 3;
   bestStepIndex: number;
   completedAt?: number;
   lastVisitedAt: number;
-}
-
-export interface BadgeRecord {
-  badgeId: string; // primary key
-  earnedAt: number;
 }
 
 export interface Preferences {
@@ -196,23 +183,6 @@ export interface Preferences {
   mode: AppMode;
   theme: ThemePreference;
   reducedMotion: boolean;
-  soundOn: boolean;
   hasOnboarded: boolean;
   displayName: string;
-  streakDays: number;
-  lastActiveDay?: string; // YYYY-MM-DD
-}
-
-export interface BadgeDefinition {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-}
-
-export interface ProgressSummary {
-  totalXp: number;
-  streakDays: number;
-  lastActiveDay?: string; // YYYY-MM-DD
-  completedLessonIds: string[];
 }

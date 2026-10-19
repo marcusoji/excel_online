@@ -38,18 +38,16 @@ function useInstallPrompt() {
   return { canInstall: Boolean(deferredPrompt), promptInstall };
 }
 
-const MODE_CARDS: { mode: AppMode; title: string; description: string; emoji: string }[] = [
+const MODE_CARDS: { mode: AppMode; title: string; description: string }[] = [
   {
     mode: "focus",
     title: "Focus",
     description: "A roomier, calmer workspace with larger cells — good for reading and working step by step.",
-    emoji: "🎯",
   },
   {
     mode: "analyst",
     title: "Analyst",
     description: "A denser, keyboard-first grid that fits more rows and columns on screen at once.",
-    emoji: "📐",
   },
 ];
 
@@ -76,9 +74,6 @@ export default function OnboardingPage() {
     <div className="min-h-dvh flex flex-col">
       <div className="flex-1 max-w-2xl mx-auto w-full px-6 py-12 flex flex-col gap-10">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <div className="text-5xl mb-4" aria-hidden>
-            🪄
-          </div>
           <h1 className="font-display text-4xl font-bold text-ink dark:text-slate-50 leading-tight">
             Excel skills you can actually use at work.
           </h1>
@@ -95,8 +90,10 @@ export default function OnboardingPage() {
               "Downloadable .xlsx practice files",
             ].map((item) => (
               <li key={item} className="flex items-center gap-2 text-sm text-ink dark:text-slate-50">
-                <span aria-hidden className="text-owl-600 dark:text-owl-300">
-                  ✓
+                <span aria-hidden className="text-owl-600 dark:text-owl-300 shrink-0">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
                 </span>
                 {item}
               </li>
@@ -119,7 +116,6 @@ export default function OnboardingPage() {
                 ].join(" ")}
                 aria-pressed={selectedMode === card.mode}
               >
-                <div className="text-2xl mb-2">{card.emoji}</div>
                 <div className="font-display font-bold text-ink dark:text-slate-50">{card.title}</div>
                 <p className="text-sm text-slate-500 dark:text-slate-300 mt-1">{card.description}</p>
               </button>
@@ -149,7 +145,7 @@ export default function OnboardingPage() {
         </Button>
 
         <section className="rounded-2xl bg-slate-25 dark:bg-slate-925 border border-slate-150 dark:border-slate-750 p-5">
-          <h2 className="font-display font-bold text-ink dark:text-slate-50 mb-2">📲 Add it to your Home Screen</h2>
+          <h2 className="font-display font-bold text-ink dark:text-slate-50 mb-2">Add it to your Home Screen</h2>
           {isIOS ? (
             <ol className="text-sm text-slate-500 dark:text-slate-300 space-y-1.5 list-decimal list-inside">
               <li>

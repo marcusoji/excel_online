@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Excel Magic Academy — a pure-frontend, offline-first Next.js 15 PWA that
+Excel Academy — a pure-frontend, offline-first Next.js 15 PWA that
 teaches practical Excel skills through 15 guided lessons in a live grid.
 No backend, no accounts; all progress is in IndexedDB via Dexie.
 
@@ -40,11 +40,12 @@ To preview the built site: `python3 -m http.server 12000 --directory out`.
   and every `LessonStep` carries an `objective` (the skill it builds) plus an
   optional `hint`. Keep new lessons in that shape — `Lesson.brief` and
   `Lesson.objectives` are required.
-- `AppMode` is visual density only (`focus` | `analyst`), not audience. Both
-  modes serve the same curriculum. Dexie migration v2 maps legacy
-  `kid`/`pro` values onto these.
-- `lesson.id` values are stable keys for Dexie progress and badges; renaming
-  one resets that lesson's progress for existing users.
+- `AppMode` is visual density only (`focus` | `analyst`). Both modes serve the
+  same curriculum. Dexie migration v2 maps legacy `kid`/`pro` values onto
+  these. Levels carry no age or audience label — only `title` and
+  `description`.
+- `lesson.id` values are stable keys for Dexie progress; renaming one resets
+  that lesson's progress for existing users.
 - Lesson step checks must be passable by the step's `demo` beats (or by the
   Fill Down / Sort / AutoSum convention `verify` simulates). Fill-Down steps
   are encoded as `highlightCells: [sourceCell, destinationCell]` where the
