@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Self-hosted fonts (via @fontsource) — no network request, works fully offline. */
+@import "@fontsource/baloo-2/600.css";
+@import "@fontsource/baloo-2/700.css";
+@import "@fontsource/baloo-2/800.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/700.css";
+
+:root {
+  --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  /* iOS: avoid the rubber-band scroll revealing a white flash outside the app shell. */
+  background-color: #fffbf2;
+}
+
+html.dark {
+  background-color: #151513;
+}
+
+body {
+  @apply bg-cream text-ink dark:bg-slate-925 dark:text-slate-50 font-body antialiased;
+  min-height: 100dvh;
+}
+
+/* Visible, generous keyboard focus everywhere — required for WCAG 2.2 AA
+   and genuinely useful for the desktop "hero" experience. */
+:focus-visible {
+  outline: 2px solid #3fa9ea;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles for the certificate page — a clean, chrome-free printable card. */
+@media print {
+  body {
+    background: white !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
